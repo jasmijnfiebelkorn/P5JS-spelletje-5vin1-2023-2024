@@ -1,6 +1,17 @@
+class Bom {
+  constructor() {
+    this.x = floor(random(1,raster.aantalKolommen))*raster.celGrootte;
+    this.y = floor(random(0,raster.aantalRijen))*raster.celGrootte;
+  }
+  
+  toon() {
+    image(bomPlaatje,this.x,this.y,raster.celGrootte,raster.celGrootte);
+  }
+}
+
 var raster = {
-  aantalRijen: 6,
-  aantalKolommen: 9,
+  aantalRijen: 12,
+  aantalKolommen: 18,
   celGrootte: null,
   
   berekenCelGrootte() {
@@ -30,19 +41,19 @@ class Jos {
   }
   
   beweeg() {
-    if (keyIsDown(LEFT_ARROW)) {
+    if (keyIsDown(65)) {
       this.x -= this.stapGrootte;
       this.frameNummer = 2;
     }
-    if (keyIsDown(RIGHT_ARROW)) {
+    if (keyIsDown(68)) {
       this.x += this.stapGrootte;
       this.frameNummer = 1;
     }
-    if (keyIsDown(UP_ARROW)) {
+    if (keyIsDown(87)) {
       this.y -= this.stapGrootte;
       this.frameNummer = 4;
     }
-    if (keyIsDown(DOWN_ARROW)) {
+    if (keyIsDown(83)) {
       this.y += this.stapGrootte;
       this.frameNummer = 5;
     }
@@ -92,7 +103,10 @@ class Vijand {
 
 function preload() {
   brug = loadImage("images/backgrounds/dame_op_brug_1800.jpg");
+   bomPlaatje = loadImage("images/sprites/bom_100px.png");
 }
+
+var bommenArray = [];
 
 function setup() {
   canvas = createCanvas(900,600);
@@ -101,17 +115,16 @@ function setup() {
   textFont("Verdana");
   textSize(90);
   raster.berekenCelGrootte();
+
+   raster = new Raster(6,9);
   
-  eve = new Jos();
-  eve.stapGrootte = 1*raster.celGrootte;
-  for (var b = 0;b < 6;b++) {
-    frameEve = loadImage("images/sprites/Eve100px/Eve_" + b + ".png");
-    eve.animatie.push(frameEve);
-  }
+  raster.berekenCelGrootte();
+  bom1 = new Bom();
   
-  alice = new Vijand(700,200);
-  alice.stapGrootte = 1*eve.stapGrootte;
-  alice.sprite = loadImage("images/sprites/Alice100px/Alice.png");
+  function draw() {
+  background(brug);
+  raster.teken();
+  bom1.toon();
   
 }
 
@@ -123,14 +136,16 @@ function draw() {
   eve.toon();
   alice.toon();
   
-  if (eve.wordtGeraakt(alice)) {
+  if (eve.staatOp(bommenArray)) {
+       background('red');
+    fill('white');
+    text("Je hebt verloren!",30,300);
     noLoop();
   }
-  
+
   if (eve.gehaald) {
     background('green');
     fill('white');
     text("Je hebt gewonnen!",30,300);
     noLoop();
   }
-}
