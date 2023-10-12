@@ -13,21 +13,42 @@ class Raster {
     stroke('grey');
     for (var rij = 0; rij < this.aantalRijen; rij++) {
       for (var kolom = 0; kolom < this.aantalKolommen; kolom++) {
+        if (rij == 11) {
+          fill('orange');
+        } 
+        else {
+          noFill();
+        }
+         rect(kolom * this.celGrootte, rij * this.celGrootte, this.celGrootte, this.celGrootte);
+        if (kolom == 17) {
+          fill('orange');
+        }
+        else {
+          noFill();
+        }
         rect(kolom * this.celGrootte, rij * this.celGrootte, this.celGrootte, this.celGrootte);
       }
     }
     pop();
   }
 }
+
 class Bom {
   constructor() {
-    this.x = floor(random(raster.aantalKolommen - 5, raster.aantalKolommen)) * raster.celGrootte;
+    this.x = floor(random(raster.aantalKolommen -9, raster.aantalKolommen)) * raster.celGrootte;
+    this.direction = 1;
     
     this.y = floor(random(0, raster.aantalRijen)) * raster.celGrootte;
   }
   toon() {
     image(bomPlaatje, this.x, this.y, raster.celGrootte, raster.celGrootte);
   }
+  beweeg() {
+    this.y += this.direction;
+    if (this.y <= 0 || this.y >= height - raster.celGrootte){
+      this.direction *= -1;
+     }
+    }
 }
 class Jos {
   constructor() {
@@ -40,29 +61,29 @@ class Jos {
     this.aanDeBeurt = true;
     this.staOpBom = false;
   }
-  beweeg() {
-    if (keyIsDown(65)) {
-      this.x -= this.stapGrootte;
-      this.frameNummer = 2;
-    }
-    if (keyIsDown(68)) {
-      this.x += this.stapGrootte;
-      this.frameNummer = 1;
-    }
-    if (keyIsDown(87)) {
-      this.y -= this.stapGrootte;
-      this.frameNummer = 4;
-    }
-    if (keyIsDown(83)) {
-      this.y += this.stapGrootte;
-      this.frameNummer = 5;
-    }
-    this.x = constrain(this.x, 0, canvas.width);
-    this.y = constrain(this.y, 0, canvas.height - raster.celGrootte);
-    if (this.x === canvas.width) {
-      this.gehaald = true;
-    }
+ beweeg() {
+   if (keyIsDown(65)) { 
+    this.x -= this.stapGrootte;
+    this.frameNummer = 2;
   }
+  if (keyIsDown(68)) { 
+    this.x += this.stapGrootte;
+    this.frameNummer = 1;
+  }
+  if (keyIsDown(87)) { 
+    this.y -= this.stapGrootte;
+    this.frameNummer = 4;
+  }
+  if (keyIsDown(83)) { 
+    this.y += this.stapGrootte;
+    this.frameNummer = 3;
+  }
+  this.x = constrain(this.x, 0, canvas.width - raster.celGrootte);
+  this.y = constrain(this.y, 0, canvas.height - raster.celGrootte);
+  if (this.x === canvas.width - raster.celGrootte) {
+    this.gehaald = true;
+  }
+}
   wordtGeraakt(vijand) {
     if (this.x === vijand.x && this.y === vijand.y) {
       return true;
@@ -99,6 +120,9 @@ class Vijand {
     image(this.sprite, this.x, this.y, raster.celGrootte, raster.celGrootte);
   }
 }
+var x;
+var speed;
+  speed = 10;
 var bommenArray = [];
 var eve;
 var alice;
@@ -110,7 +134,7 @@ function preload() {
   brug = loadImage("images/backgrounds/dame_op_brug_1800.jpg");
   bomPlaatje = loadImage("images/sprites/bom_100px.png");
   eveAnimatie = [];
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 5; i++) {
     eveAnimatie.push(loadImage(`images/sprites/Eve100px/Eve_${i}.png`));
   }
 }
@@ -124,6 +148,7 @@ function setup() {
   raster.berekenCelGrootte();
   for (var b = 0; b < 5; b++) {
     bommenArray.push(new Bom());
+
   }
   eve = new Jos();
   eve.stapGrootte = 1 * raster.celGrootte;
@@ -139,6 +164,7 @@ function draw() {
   background(brug);
   raster.teken();
   for (var b = 0; b < bommenArray.length; b++) {
+    bommenArray[b].beweeg();
     bommenArray[b].toon();
   }
   eve.beweeg();
@@ -147,14 +173,19 @@ function draw() {
   eve.toon();
   alice.toon();
   bob.toon();
+
   if (alice.x === bob.x && alice.y === bob.y) {
     bob.beweeg();
   }
-  if (eve.wordtGeraakt(alice) || eve.wordtGeraakt(bob) || eve.staatOp(bommenArray)) {
+
+
+  
+  if (eve.wordtGeraakt(alice) || eve.wordtGeraakt(bob) || eve.wordtGeraakt(bommenArray) || eve.staatOp(bommenArray)) {
     background('red');
     fill('white');
     text("Je hebt verloren!", 30, 300);
     noLoop();
+    
   }
   if (eve.gehaald) {
     background('green');
