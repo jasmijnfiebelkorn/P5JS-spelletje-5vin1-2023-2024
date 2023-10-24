@@ -1,3 +1,27 @@
+class Counter {
+  constructor() {
+    this.lifes = 3;
+    this.x = 9
+  }
+
+  decreaseLife() {
+    this.lifes--;
+  }
+
+  display() {
+    textSize(24);
+    fill('blue');
+    text(`Lives: ${this.lifes}`, this.x, 30);
+  }
+}
+let counter = new Counter();
+function keyTyped() {
+  if (key === ' ') {
+    counter.decreaseLife();
+  }
+}
+
+
 class Raster {
   constructor(r, k) {
     this.aantalRijen = r;
@@ -36,15 +60,15 @@ class Raster {
 class Bom {
   constructor() {
     this.x = floor(random(raster.aantalKolommen -9, raster.aantalKolommen)) * raster.celGrootte;
-    this.direction = 1;
-    
+    this.direction = 5;
     this.y = floor(random(0, raster.aantalRijen)) * raster.celGrootte;
+    this.speed = 0.2;
   }
   toon() {
     image(bomPlaatje, this.x, this.y, raster.celGrootte, raster.celGrootte);
   }
   beweeg() {
-    this.y += this.direction;
+    this.y += this.direction * raster.celGrootte * this.speed;
     if (this.y <= 0 || this.y >= height - raster.celGrootte){
       this.direction *= -1;
      }
@@ -170,9 +194,12 @@ function draw() {
   eve.beweeg();
   alice.beweeg();
   bob.beweeg();
+  
   eve.toon();
   alice.toon();
   bob.toon();
+
+  counter.display();
 
   if (alice.x === bob.x && alice.y === bob.y) {
     bob.beweeg();
