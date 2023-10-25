@@ -62,18 +62,36 @@ class Bom {
     this.x = floor(random(raster.aantalKolommen -9, raster.aantalKolommen)) * raster.celGrootte;
     this.direction = 5;
     this.y = floor(random(0, raster.aantalRijen)) * raster.celGrootte;
-    this.speed = 0.2;
-  }
+    this.speed = random(0.05, 0.1);
+      this.prevX = this.x;
+      this.prevY = this.y;
+    }
+
+  
   toon() {
     image(bomPlaatje, this.x, this.y, raster.celGrootte, raster.celGrootte);
   }
   beweeg() {
-    this.y += this.direction * raster.celGrootte * this.speed;
-    if (this.y <= 0 || this.y >= height - raster.celGrootte){
-      this.direction *= -1;
-     }
+     this.prevX = this.x;
+      this.prevY = this.y;
+      this.y += this.direction * raster.celGrootte * this.speed;
+      if (this.y <= 0 || this.y >= height - raster.celGrootte) {
+        this.direction *= -1;
+      }
     }
-}
+   isColliding(entity) {
+     const collidedWithEntity =
+       this.x + raster.celGrootte > entity.x &&
+       this.x < entity.x + raster.celGrootte &&
+       this.y + raster.celGrootte > entity.y &&
+       this.y < entity.y + raster.celGrootte;
+     const traveledThroughEntity =
+       (this.x >= entity.prevX && this.x <= entity.prevX + raster.celGrootte) ||
+       (this.y >= entity.prevY && this.y <= entity.prevY + raster.celGrootte);
+     return collidedWithEntity || traveledThroughEntity;
+   }
+    }
+
 class Jos {
   constructor() {
     this.x = 0;
@@ -117,7 +135,7 @@ class Jos {
   }
   staatOp(bommenLijst) {
     for (var b = 0; b < bommenLijst.length; b++) {
-      if (bommenLijst[b].x === this.x && bommenLijst[b].y === this.y) {
+      if (bommenLijst[b].isColliding(this)) {
         this.staOpBom = true;
       }
     }
