@@ -6,12 +6,23 @@ class Counter {
 
   decreaseLife() {
     this.lifes--;
+    display ();
+    if (this.lifes === 0){
+      this.gameOver();
+    }
   }
 
   display() {
     textSize(24);
     fill('blue');
     text(`Lives: ${this.lifes}`, this.x, 30);
+  }
+
+  gameOver(){
+    background('red');
+    fill('white');
+    text("Je hebt verloren!", 30, 300);
+    noLoop();
   }
 }
 let counter = new Counter();
@@ -126,13 +137,17 @@ class Jos {
     this.gehaald = true;
   }
 }
-  wordtGeraakt(vijand) {
+  decreaseLife(counter) {  // New method added
+   counter.decreaseLife(); 
+    
+  }
+  wordtGeraakt(vijand, Counter) {  // Updated method
     if (this.x === vijand.x && this.y === vijand.y) {
-      return true;
-    } else {
-      return false;
+      this.decreaseLife(Counter);
     }
   }
+
+  
   staatOp(bommenLijst) {
     for (var b = 0; b < bommenLijst.length; b++) {
       if (bommenLijst[b].isColliding(this)) {
@@ -173,12 +188,13 @@ var brug;
 var bomPlaatje;
 var eveAnimatie;
 function preload() {
-  brug = loadImage("images/backgrounds/dame_op_brug_1800.jpg");
-  bomPlaatje = loadImage("images/sprites/bom_100px.png");
+  brug = loadImage("images/imageforest.jpg");
+  bomPlaatje = loadImage("images/sprites/bom_100px.png"); 
   eveAnimatie = [];
   for (let i = 0; i < 5; i++) {
     eveAnimatie.push(loadImage(`images/sprites/Eve100px/Eve_${i}.png`));
   }
+  appelPlaatje = loadImage("images/sprites/appel_1.png")
 }
 function setup() {
   canvas = createCanvas(900, 600);
@@ -190,7 +206,6 @@ function setup() {
   raster.berekenCelGrootte();
   for (var b = 0; b < 5; b++) {
     bommenArray.push(new Bom());
-
   }
   eve = new Jos();
   eve.stapGrootte = 1 * raster.celGrootte;
@@ -201,7 +216,15 @@ function setup() {
   bob = new Vijand(600, 400);
   bob.stapGrootte = 1 * eve.stapGrootte;
   bob.sprite = loadImage("images/sprites/Bob100px/Bob.png");
+  placeAppel();
 }
+
+
+function placeAppel() {
+  appelX = floor(random(1, raster.aantalKolommen - 1)) * raster.celGrootte;
+  appelY = floor(random(1, raster.aantalRijen - 1)) * raster.celGrootte;
+}
+
 function draw() {
   background(brug);
   raster.teken();
@@ -217,21 +240,29 @@ function draw() {
   alice.toon();
   bob.toon();
 
-  counter.display();
-
-  if (alice.x === bob.x && alice.y === bob.y) {
-    bob.beweeg();
-  }
-
+  image(appelPlaatje, appelX, appelY, raster.celGrootte, raster.celGrootte);
 
   
-  if (eve.wordtGeraakt(alice) || eve.wordtGeraakt(bob) || eve.wordtGeraakt(bommenArray) || eve.staatOp(bommenArray)) {
-    background('red');
-    fill('white');
-    text("Je hebt verloren!", 30, 300);
-    noLoop();
-    
+  if (eve.x === appelX && eve.y === appelY) {
+    counter.lifes++; 
+    placeApple(); 
+    hasExtraLife = true; 
   }
+  
+  counter.display();
+
+
+  if (eve.wordtGeraakt(alice) || eve.wordtGeraakt(bob) || eve.wordtGeraakt(bommenArray) || eve.staatOp(bommenArray)) {
+  if (Counter.lifes == 0)
+    {
+      background('red');
+      fill('white');
+      text("Je hebt verloren!", 30, 300);
+      noLoop();
+   }
+
+  }
+  
   if (eve.gehaald) {
     background('green');
     fill('white');
@@ -239,3 +270,4 @@ function draw() {
     noLoop();
   }
 }
+
