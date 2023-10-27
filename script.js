@@ -1,37 +1,5 @@
-class Counter {
-  constructor() {
-    this.lifes = 3;
-    this.x = 9
-  }
-
-  decreaseLife() {
-    this.lifes--;
-    display ();
-    if (this.lifes === 0){
-      this.gameOver();
-    }
-  }
-
-  display() {
-    textSize(24);
-    fill('blue');
-    text(`Lives: ${this.lifes}`, this.x, 30);
-  }
-
-  gameOver(){
-    background('red');
-    fill('white');
-    text("Je hebt verloren!", 30, 300);
-    noLoop();
-  }
-}
-let counter = new Counter();
-function keyTyped() {
-  if (key === ' ') {
-    counter.decreaseLife();
-  }
-}
-
+var playerleven = 1
+class ExtraLife  0
 
 class Raster {
   constructor(r, k) {
@@ -137,13 +105,12 @@ class Jos {
     this.gehaald = true;
   }
 }
-  decreaseLife(counter) {  // New method added
-   counter.decreaseLife(); 
+  
     
-  }
-  wordtGeraakt(vijand, Counter) {  // Updated method
+  
+  wordtGeraakt(vijand, Counter) { 
     if (this.x === vijand.x && this.y === vijand.y) {
-      this.decreaseLife(Counter);
+      this.lifes = -1;
     }
   }
 
@@ -225,6 +192,8 @@ function placeAppel() {
   appelY = floor(random(1, raster.aantalRijen - 1)) * raster.celGrootte;
 }
 
+
+
 function draw() {
   background(brug);
   raster.teken();
@@ -243,22 +212,30 @@ function draw() {
   image(appelPlaatje, appelX, appelY, raster.celGrootte, raster.celGrootte);
 
   
-  if (eve.x === appelX && eve.y === appelY) {
-    counter.lifes++; 
-    placeApple(); 
-    hasExtraLife = true; 
-  }
+  if (!extraLife.collected && dist(eve.x, eve.y, extraLife.x, extraLife.y) < raster.celGrootte) {
+    extraLife.collected = true;
+    playerleven++;
   
-  counter.display();
+  
+  
+  if (alice.x === bob.x && alice.y === bob.y) { 
+    alice.beweeg(); 
+  }
 
-
-  if (eve.wordtGeraakt(alice) || eve.wordtGeraakt(bob) || eve.wordtGeraakt(bommenArray) || eve.staatOp(bommenArray)) {
-  if (Counter.lifes == 0)
-    {
-      background('red');
-      fill('white');
-      text("Je hebt verloren!", 30, 300);
-      noLoop();
+  fill ('white');
+  textSize(20);
+  text("Levens: " + playerleven, 20, 50);
+  
+          if (eve.wordtGeraakt(alice) || eve.wordtGeraakt(bob) || eve.wordtGeraakt(bommenArray) || eve.staatOp(bommenArray)){
+        playerleven -= 1;
+      if (playerleven <= 0){
+        background("red")
+        fill ("black")    
+        textSize(250);
+        text ("Je hebt verloren!!",10,375)
+        noloop();
+      }
+     
    }
 
   }
@@ -270,4 +247,3 @@ function draw() {
     noLoop();
   }
 }
-
