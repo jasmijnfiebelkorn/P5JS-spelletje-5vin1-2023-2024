@@ -191,6 +191,7 @@ function setup() {
   bob.sprite = loadImage("images/sprites/Bob100px/Bob.png");
 
   placeAppel();
+  //nu hebben appelX en appelY een waarde en kunnen we een new extraLife aanmaken
   extraLife = new ExtraLife(appelX, appelY);
 
 }
