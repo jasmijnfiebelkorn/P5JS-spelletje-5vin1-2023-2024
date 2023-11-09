@@ -1,5 +1,12 @@
-var playerleven = 1
-class ExtraLife  0
+var playerleven = 1;
+class ExtraLife {
+
+  constructor(x, y) {
+    this.collected = false;
+    this.x = x;
+    this.y = y;
+  }
+}
 
 class Raster {
   constructor(r, k) {
@@ -18,11 +25,11 @@ class Raster {
       for (var kolom = 0; kolom < this.aantalKolommen; kolom++) {
         if (rij == 11) {
           fill('orange');
-        } 
+        }
         else {
           noFill();
         }
-         rect(kolom * this.celGrootte, rij * this.celGrootte, this.celGrootte, this.celGrootte);
+        rect(kolom * this.celGrootte, rij * this.celGrootte, this.celGrootte, this.celGrootte);
         if (kolom == 17) {
           fill('orange');
         }
@@ -38,38 +45,37 @@ class Raster {
 
 class Bom {
   constructor() {
-    this.x = floor(random(raster.aantalKolommen -9, raster.aantalKolommen)) * raster.celGrootte;
+    this.x = floor(random(raster.aantalKolommen - 9, raster.aantalKolommen)) * raster.celGrootte;
     this.direction = 5;
     this.y = floor(random(0, raster.aantalRijen)) * raster.celGrootte;
     this.speed = random(0.05, 0.1);
-      this.prevX = this.x;
-      this.prevY = this.y;
-    }
+    this.prevX = this.x;
+    this.prevY = this.y;
+  }
 
-  
   toon() {
     image(bomPlaatje, this.x, this.y, raster.celGrootte, raster.celGrootte);
   }
   beweeg() {
-     this.prevX = this.x;
-      this.prevY = this.y;
-      this.y += this.direction * raster.celGrootte * this.speed;
-      if (this.y <= 0 || this.y >= height - raster.celGrootte) {
-        this.direction *= -1;
-      }
+    this.prevX = this.x;
+    this.prevY = this.y;
+    this.y += this.direction * raster.celGrootte * this.speed;
+    if (this.y <= 0 || this.y >= height - raster.celGrootte) {
+      this.direction *= -1;
     }
-   isColliding(entity) {
-     const collidedWithEntity =
-       this.x + raster.celGrootte > entity.x &&
-       this.x < entity.x + raster.celGrootte &&
-       this.y + raster.celGrootte > entity.y &&
-       this.y < entity.y + raster.celGrootte;
-     const traveledThroughEntity =
-       (this.x >= entity.prevX && this.x <= entity.prevX + raster.celGrootte) ||
-       (this.y >= entity.prevY && this.y <= entity.prevY + raster.celGrootte);
-     return collidedWithEntity || traveledThroughEntity;
-   }
-    }
+  }
+  isColliding(entity) {
+    const collidedWithEntity =
+      this.x + raster.celGrootte > entity.x &&
+      this.x < entity.x + raster.celGrootte &&
+      this.y + raster.celGrootte > entity.y &&
+      this.y < entity.y + raster.celGrootte;
+    const traveledThroughEntity =
+      (this.x >= entity.prevX && this.x <= entity.prevX + raster.celGrootte) ||
+      (this.y >= entity.prevY && this.y <= entity.prevY + raster.celGrootte);
+    return collidedWithEntity || traveledThroughEntity;
+  }
+}
 
 class Jos {
   constructor() {
@@ -82,39 +88,38 @@ class Jos {
     this.aanDeBeurt = true;
     this.staOpBom = false;
   }
- beweeg() {
-   if (keyIsDown(65)) { 
-    this.x -= this.stapGrootte;
-    this.frameNummer = 2;
-  }
-  if (keyIsDown(68)) { 
-    this.x += this.stapGrootte;
-    this.frameNummer = 1;
-  }
-  if (keyIsDown(87)) { 
-    this.y -= this.stapGrootte;
-    this.frameNummer = 4;
-  }
-  if (keyIsDown(83)) { 
-    this.y += this.stapGrootte;
-    this.frameNummer = 3;
-  }
-  this.x = constrain(this.x, 0, canvas.width - raster.celGrootte);
-  this.y = constrain(this.y, 0, canvas.height - raster.celGrootte);
-  if (this.x === canvas.width - raster.celGrootte) {
-    this.gehaald = true;
-  }
-}
-  
-    
-  
-  wordtGeraakt(vijand, Counter) { 
-    if (this.x === vijand.x && this.y === vijand.y) {
-      this.lifes = -1;
+  beweeg() {
+    if (keyIsDown(65)) {
+      this.x -= this.stapGrootte;
+      this.frameNummer = 2;
+    }
+    if (keyIsDown(68)) {
+      this.x += this.stapGrootte;
+      this.frameNummer = 1;
+    }
+    if (keyIsDown(87)) {
+      this.y -= this.stapGrootte;
+      this.frameNummer = 4;
+    }
+    if (keyIsDown(83)) {
+      this.y += this.stapGrootte;
+      this.frameNummer = 3;
+    }
+    this.x = constrain(this.x, 0, canvas.width - raster.celGrootte);
+    this.y = constrain(this.y, 0, canvas.height - raster.celGrootte);
+    if (this.x === canvas.width - raster.celGrootte) {
+      this.gehaald = true;
     }
   }
 
-  
+
+  wordtGeraakt(vijand) {
+    if (this.x === vijand.x && this.y === vijand.y) {
+      return true;
+    }
+    return false;
+  }
+
   staatOp(bommenLijst) {
     for (var b = 0; b < bommenLijst.length; b++) {
       if (bommenLijst[b].isColliding(this)) {
@@ -146,7 +151,7 @@ class Vijand {
 }
 var x;
 var speed;
-  speed = 10;
+speed = 10;
 var bommenArray = [];
 var eve;
 var alice;
@@ -154,9 +159,10 @@ var bob;
 var brug;
 var bomPlaatje;
 var eveAnimatie;
+var extraLife;
 function preload() {
   brug = loadImage("images/imageforest.jpg");
-  bomPlaatje = loadImage("images/sprites/bom_100px.png"); 
+  bomPlaatje = loadImage("images/sprites/bom_100px.png");
   eveAnimatie = [];
   for (let i = 0; i < 5; i++) {
     eveAnimatie.push(loadImage(`images/sprites/Eve100px/Eve_${i}.png`));
@@ -183,18 +189,33 @@ function setup() {
   bob = new Vijand(600, 400);
   bob.stapGrootte = 1 * eve.stapGrootte;
   bob.sprite = loadImage("images/sprites/Bob100px/Bob.png");
-  placeAppel();
-}
 
+  placeAppel();
+  extraLife = new ExtraLife(appelX, appelY);
+
+}
 
 function placeAppel() {
   appelX = floor(random(1, raster.aantalKolommen - 1)) * raster.celGrootte;
   appelY = floor(random(1, raster.aantalRijen - 1)) * raster.celGrootte;
+  extraLife = new ExtraLife(appelX, appelY);
 }
 
 
+function eindeSpel() {
+  retrybtn = createButton('Probeer het nog eens.');
+  retrybtn.style('font-size', '25px');
+  retrybtn.position(60, 350);
+  retrybtn.size(300, 30);
+  retrybtn.mousePressed(goHome);
+}
+
+function goHome() {
+  window.open("https://p5js-spelletje-5vin1-2023-2024.5vin1-2023-2024.repl.co/")
+}
 
 function draw() {
+  if (playerleven == 0) return;
   background(brug);
   raster.teken();
   for (var b = 0; b < bommenArray.length; b++) {
@@ -204,46 +225,47 @@ function draw() {
   eve.beweeg();
   alice.beweeg();
   bob.beweeg();
-  
+
   eve.toon();
   alice.toon();
   bob.toon();
 
   image(appelPlaatje, appelX, appelY, raster.celGrootte, raster.celGrootte);
 
-  
+  console.log('x:' + eve.x + ' y:' + eve.y + ' x:' + extraLife.x + ' y:' + extraLife.y + ' dist ' + dist(eve.x, eve.y, extraLife.x, extraLife.y) + ' celgroote ' + raster.celGrootte + extraLife.collected);
   if (!extraLife.collected && dist(eve.x, eve.y, extraLife.x, extraLife.y) < raster.celGrootte) {
     extraLife.collected = true;
     playerleven++;
-  
-  
-  
-  if (alice.x === bob.x && alice.y === bob.y) { 
-    alice.beweeg(); 
+    console.log('playerleven ' + playerleven);
+    extraLife.collected = false;
+    //plaats de appel ergens anders op het scherm
+    placeAppel();
   }
 
-  fill ('white');
+  if (alice.x === bob.x && alice.y === bob.y) {
+    alice.beweeg();
+  }
+
+  fill('white');
   textSize(20);
   text("Levens: " + playerleven, 20, 50);
-  
-          if (eve.wordtGeraakt(alice) || eve.wordtGeraakt(bob) || eve.wordtGeraakt(bommenArray) || eve.staatOp(bommenArray)){
-        playerleven -= 1;
-      if (playerleven <= 0){
-        background("red")
-        fill ("black")    
-        textSize(250);
-        text ("Je hebt verloren!!",10,375)
-        noloop();
-      }
-     
-   }
 
+  if (eve.wordtGeraakt(alice) || eve.wordtGeraakt(bob) || eve.wordtGeraakt(bommenArray) || eve.staatOp(bommenArray)) {
+    console.log('geraakt');
+    playerleven -= 1;
+    if (playerleven <= 0) {
+      background("red")
+      fill("black")
+      textSize(25);
+      text("Je hebt verloren!!", 30, 300)
+      eindeSpel();
+    }
   }
-  
+
   if (eve.gehaald) {
     background('green');
     fill('white');
-    text("Je hebt gewonnen!", 30, 300);
-    noLoop();
+    text("Je hebt gewonnen!!", 30, 300);
+    eindeSpel();
   }
 }
